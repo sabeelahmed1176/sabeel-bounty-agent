@@ -76,7 +76,13 @@ async function runCron() {
             // ACT AS WORKER
             console.log(`👷 [WORKER] Looking for open bounties...`);
             const bounties = await workerContract.getActiveBounties();
-            const openBounties = bounties.filter(b => !b.isCompleted && !b.isCancelled && BigInt(b.winnersCount) < BigInt(b.maxWinners));
+            const openBounties = bounties.filter(b => 
+    !b.isCompleted && 
+    !b.isCancelled && 
+    BigInt(b.winnersCount) < BigInt(b.maxWinners) &&
+    BigInt(b.deadline) > BigInt(Math.floor(Date.now() / 1000))
+);
+
             
             if (openBounties.length > 0) {
                 const bounty = openBounties[Math.floor(Math.random() * openBounties.length)];
