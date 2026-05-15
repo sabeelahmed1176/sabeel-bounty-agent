@@ -1,0 +1,30 @@
+name: Autonomous Agent Cron
+
+on:
+  schedule:
+    # Run every 30 minutes
+    - cron: '*/30 * * * *'
+  # Allow manual triggering from the GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Agent Script
+        env:
+          BOSS_PRIVATE_KEY: ${{ secrets.BOSS_PRIVATE_KEY }}
+          WORKER_PRIVATE_KEY: ${{ secrets.WORKER_PRIVATE_KEY }}
+        run: node scripts/cron_agent.js
